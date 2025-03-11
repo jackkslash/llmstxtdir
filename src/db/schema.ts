@@ -29,10 +29,6 @@ export const llmsDocuments = pgTable('llms_documents', {
     contentHash: text('content_hash').notNull(),
     content: text('content').notNull(),
     fetchedAt: timestamp('fetched_at').notNull().defaultNow(),
-}, (table) => {
-    return [
-        uniqueIndex('llms_hash_idx').on(table.contentHash, table.projectId),
-    ];
 });
 
 export const user = pgTable("user", {

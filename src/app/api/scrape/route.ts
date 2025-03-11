@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { llmsDocuments, projects } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and, desc } from 'drizzle-orm';
 import crypto from 'crypto';
 
 export async function GET(request: NextRequest) {
@@ -29,13 +29,43 @@ export async function GET(request: NextRequest) {
       throw new Error(`Failed to fetch URL: ${response.status} ${response.statusText}`);
     }
     const res = await response.text();
+    
+    // Calculate content hash
+    const contentHash = crypto.createHash('sha256').update(res).digest('hex');
+    
+    // Check if we already have this exact content
+    const existingDocument = await db
+      .select({ id: llmsDocuments.id, contentHash: llmsDocuments.contentHash })
+      .from(llmsDocuments)
+      .where(
+        and(
+          eq(llmsDocuments.projectId, projectId),
+          eq(llmsDocuments.urlValue, baseUrl + '/llms.txt')
+        )
+      )
+      .orderBy(desc(llmsDocuments.fetchedAt))
+      .limit(1);
+      
+    // If we have an existing document with the same hash, don't store it again
+    if (existingDocument.length > 0 && existingDocument[0].contentHash === contentHash) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          projectId,
+          baseUrl,
+          unchanged: true,
+          message: 'Content unchanged since last fetch'
+        },
+      });
+    }
 
+    // Store the new document as content has changed (or this is the first fetch)
     await db.insert(llmsDocuments).values({
       id: crypto.randomUUID(),
       projectId,
       urlType: 'standard',
       urlValue: baseUrl + '/llms.txt',
-      contentHash: crypto.createHash('sha256').update(res).digest('hex'),
+      contentHash,
       content: res,
       fetchedAt: new Date()
     });
@@ -45,8 +75,8 @@ export async function GET(request: NextRequest) {
       data: {
         projectId,
         baseUrl,
-        url,
-        res
+        unchanged: false,
+        contentUpdated: true
       },
     });
   } catch (error) {
