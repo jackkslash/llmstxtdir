@@ -1,15 +1,50 @@
 import { db } from '@/db';
 import { projects, llmsDocuments } from '@/db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, and } from 'drizzle-orm';
 
 export async function getAllProjects() {
   try {
-    return await db.select().from(projects);
+    const allProjects = await db.select().from(projects);
+
+    const projectsWithLatestDocuments = await Promise.all(
+      allProjects.map(async (project) => {
+        const latestStandardDocument = await db.select()
+          .from(llmsDocuments)
+          .where(
+            and(
+              eq(llmsDocuments.projectId, project.id),
+              eq(llmsDocuments.urlType, 'standard')
+            )
+          )
+          .orderBy(desc(llmsDocuments.fetchedAt))
+          .limit(1);
+
+        const latestFullDocument = await db.select()
+          .from(llmsDocuments)
+          .where(
+            and(
+              eq(llmsDocuments.projectId, project.id),
+              eq(llmsDocuments.urlType, 'full')
+            )
+          )
+          .orderBy(desc(llmsDocuments.fetchedAt))
+          .limit(1);
+
+        return {
+          project,
+          latestStandardDocument: latestStandardDocument[0] || null,
+          latestFullDocument: latestFullDocument[0] || null,
+        };
+      })
+    );
+
+    return projectsWithLatestDocuments;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch projects');
+    throw new Error('Failed to fetch projects with latest documents');
   }
 }
+
 
 export async function getProjectWithDocuments(id: string) {
   try {
