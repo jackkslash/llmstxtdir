@@ -67,3 +67,20 @@ export async function getProjectWithDocuments(id: string) {
     throw new Error('Failed to fetch project with documents');
   }
 }
+
+export async function getDocument(id: string) {
+  try {
+    const document = await db.select({
+      id: llmsDocuments.id,
+      content: llmsDocuments.content,
+      fetchedAt: llmsDocuments.fetchedAt,
+    })
+      .from(llmsDocuments)
+      .where(eq(llmsDocuments.id, id));
+
+    return document[0];
+  } catch (error) {
+    console.error('Error fetching document:', error);
+    throw error;
+  }
+}

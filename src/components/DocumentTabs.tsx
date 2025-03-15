@@ -20,7 +20,6 @@ interface DocumentAccordionProps {
     groupedDocuments: GroupedDocuments;
     sortedDates: string[];
 }
-
 export default function DocumentAccordion({ groupedDocuments, sortedDates }: DocumentAccordionProps) {
     const [openDate, setOpenDate] = useState<string | null>(sortedDates[0] || null);
 
@@ -37,7 +36,7 @@ export default function DocumentAccordion({ groupedDocuments, sortedDates }: Doc
             <div className="border-b border-gray-200">
                 {sortedDates.map((date) => (
                     <div key={date} className="mb-2">
-                        <button 
+                        <button
                             className="font-medium text-xs py-2 px-4 w-full text-left border-b-2 border-transparent"
                             onClick={() => toggleDate(date)}
                         >
@@ -48,9 +47,18 @@ export default function DocumentAccordion({ groupedDocuments, sortedDates }: Doc
                             <ul className="space-y-2 pl-4">
                                 {groupedDocuments[date].map((doc: Document) => (
                                     <li key={doc.id}>
-                                        <a href={doc.urlValue} target="_blank" rel="noopener noreferrer" className="font-medium text-sm">
-                                            {doc.urlValue}
-                                        </a>
+                                        {date === mostRecentDate ? (
+                                            <a href={doc.urlValue} target="_blank" rel="noopener noreferrer" className="font-medium text-sm">
+                                                {doc.urlValue}
+                                            </a>
+                                        ) : (
+                                            <a
+                                                href={`/documents/${doc.id}/text`}
+                                                className="text-sm"
+                                            >
+                                                {doc.urlValue}
+                                            </a>
+                                        )}
                                     </li>
                                 ))}
                             </ul>
