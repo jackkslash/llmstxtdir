@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -8,6 +7,9 @@ export default function Home() {
         <div className="font-medium text-sm">LLMS.TXT.DIR</div>
         <Link href="/dir" className="font-medium text-sm">
           DIRECTORY
+        </Link>
+        <Link href="/dir/submit" className="font-medium text-sm">
+          SUBMIT
         </Link>
       </main>
     </div>

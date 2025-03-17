@@ -1,6 +1,8 @@
+'use server'
 import { db } from '@/db';
 import { projects, llmsDocuments } from '@/db/schema';
 import { eq, desc, and } from 'drizzle-orm';
+import { redirect } from 'next/navigation';
 
 export async function getAllProjects() {
   try {
@@ -82,5 +84,66 @@ export async function getDocument(id: string) {
   } catch (error) {
     console.error('Error fetching document:', error);
     throw error;
+  }
+}
+
+export interface ProjectData {
+  name: string;
+  slug: string;
+  description: string;
+  website: string;
+  category: string;
+  isOpenSource: boolean;
+}
+
+export async function submitProject(prevState: any, formData: FormData) {
+  try {
+    const requiredFields = ['name', 'slug', 'description', 'website', 'category'];
+    const errorFields = [];
+
+    for (const field of requiredFields) {
+      if (!formData.get(field)) {
+        errorFields.push(field);
+      }
+    }
+
+    if (errorFields.length > 0) {
+      return {
+        error: `Missing required field: ${errorFields.join(', ')}`,
+        success: false,
+      };
+    }
+
+    const rawFromData = {
+      name: formData.get('name') as string,
+      slug: formData.get('slug') as string,
+      description: formData.get('description') as string,
+      website: formData.get('website') as string,
+      category: formData.get('category') as string,
+      isOpenSource: formData.get('isOpenSource') === 'true',
+      logoUrl: (formData.get('logoUrl') as string) || null,
+      repoUrl: (formData.get('repoUrl') as string) || null,
+      publishedAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const id = crypto.randomUUID();
+
+    await db.insert(projects).values({
+      id: id,
+      ...rawFromData,
+    });
+
+
+    return {
+      error: '',
+      success: true,
+    };
+  } catch (error) {
+    console.error('Error creating project:', error);
+    return {
+      error: 'Internal Server Error',
+      success: false,
+    };
   }
 }
