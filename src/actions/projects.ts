@@ -134,6 +134,8 @@ export async function submitProject(prevState: any, formData: FormData) {
       ...rawFromData,
     });
 
+    await fetch(process.env.BASE_URL + '/api/scrape?projectId=' + id);
+    await fetch(process.env.BASE_URL + '/api/scrape?projectId=' + id + '&type=full');
 
     return {
       error: '',
