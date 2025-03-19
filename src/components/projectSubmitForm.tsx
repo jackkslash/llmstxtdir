@@ -23,90 +23,91 @@ export default function project() {
     return (
         <div className='min-h-screen flex items-center justify-center'>
             <div className='flex flex-col items-center gap-8 mx-auto w-full max-w-sm'>
-                <h1>Submit a Project</h1>
-                <p>Submit a project to the directory</p>
+                <h1 className="font-medium text-lg">SUBMIT A PROJECT</h1>
+                <p className="font-medium text-sm text-gray-500">SUBMIT A PROJECT TO THE DIRECTORY</p>
                 <form action={formAction} className='flex flex-col gap-4 w-full'>
                     <input
                         type="text"
                         name="name"
-                        placeholder="Name"
-                        className="p-2 border rounded"
+                        placeholder="NAME"
+                        className="p-2 font-medium text-sm bg-transparent border-b border-gray-300 focus:outline-none focus:border-black"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     />
                     <input
                         type="text"
                         name="slug"
-                        placeholder="Slug"
-                        className="p-2 border rounded"
+                        placeholder="SLUG"
+                        className="p-2 font-medium text-sm bg-transparent border-b border-gray-300 focus:outline-none focus:border-black"
                         value={formData.slug}
                         onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                     />
                     <input
                         type="text"
                         name="description"
-                        placeholder="Description"
-                        className="p-2 border rounded"
+                        placeholder="DESCRIPTION"
+                        className="p-2 font-medium text-sm bg-transparent border-b border-gray-300 focus:outline-none focus:border-black"
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     />
                     <input
                         type="text"
                         name="website"
-                        placeholder="Website"
-                        className="p-2 border rounded"
+                        placeholder="WEBSITE"
+                        className="p-2 font-medium text-sm bg-transparent border-b border-gray-300 focus:outline-none focus:border-black"
                         value={formData.website}
                         onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                     />
                     <input
                         type="text"
                         name="category"
-                        placeholder="Category"
-                        className="p-2 border rounded"
+                        placeholder="CATEGORY"
+                        className="p-2 font-medium text-sm bg-transparent border-b border-gray-300 focus:outline-none focus:border-black"
                         value={formData.category}
                         onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                     />
                     <input
                         type="text"
                         name="logoUrl"
-                        placeholder="Logo URL"
-                        className="p-2 border rounded"
+                        placeholder="LOGO URL"
+                        className="p-2 font-medium text-sm bg-transparent border-b border-gray-300 focus:outline-none focus:border-black"
                         value={formData.logoUrl}
                         onChange={(e) => setFormData({ ...formData, logoUrl: e.target.value })}
                     />
                     <input
                         type="text"
                         name="repoUrl"
-                        placeholder="Repo URL"
-                        className="p-2 border rounded"
+                        placeholder="REPO URL"
+                        className="p-2 font-medium text-sm bg-transparent border-b border-gray-300 focus:outline-none focus:border-black"
                         value={formData.repoUrl}
                         onChange={(e) => setFormData({ ...formData, repoUrl: e.target.value })}
                     />
-                    <div className='flex flex-row items-center gap-2'>
-                        <label htmlFor="isOpenSource" className="text-sm">Is Open Source</label>
+                    <div className='flex flex-row items-center gap-4 py-2'>
+                        <label htmlFor="isOpenSource" className="font-medium text-sm">OPEN SOURCE</label>
                         <input
                             type="checkbox"
                             id="isOpenSource"
                             name="isOpenSource"
                             checked={formData.isOpenSource}
                             onChange={(e) => setFormData({ ...formData, isOpenSource: e.target.checked })}
+                            className="h-4 w-4 accent-black rounded border-gray-300 focus:ring-black"
                         />
                     </div>
                     <button
                         type="submit"
                         disabled={pending}
-                        className="bg-blue-500 text-white p-2 rounded disabled:opacity-50"
+                        className="font-medium text-sm hover:opacity-70 disabled:opacity-50"
                     >
-                        {pending ? 'Submitting...' : 'Submit'}
+                        {pending ? 'SUBMITTING...' : 'SUBMIT'}
                     </button>
                     {state?.error && (
-                        <p className="text-red-500" aria-live="polite" role="status">
+                        <p className="font-medium text-sm text-red-500" aria-live="polite" role="status">
                             {state.error}
                         </p>
                     )}
                     {state?.success && (
-                        <p className="text-green-500" aria-live="polite" role="status">
-                            Project submitted successfully
+                        <p className="font-medium text-sm text-green-500" aria-live="polite" role="status">
+                            PROJECT SUBMITTED
                         </p>
                     )}
                 </form>
